@@ -32,29 +32,38 @@ const productFunctions = (() => ({
   createOne: (req, res) => {
     // create shit (create / post)
     const data = {
-      category: "cheese",
-      description: ["words oo lala", "more words oooo"],
-      details: {
-        country: "Denmark",
-        price: 500,
-        weight: 220
-      },
-      id: 8,
-      images: [{
-          alt: "Primary image",
-          url: "cheese_01.jpg"
-        },
-        {
-          alt: "Secondary image",
-          url: "cheese_02.jpg"
-        },
-        {
-          alt: "Secondary image",
-          url: "cheese_03.jpg"
-        }
-      ],
-      name: "Mystery Cheese"
+      ...req.fields
+
+      // = {category, description, details, id, images, name}
+      // = category: req.fields.category
+      // = description: req.fields.description
+      // = details: req.fields.details
+      // ... osv...
+
+      // category: "cheese",
+      // description: ["words oo lala", "more words oooo"],
+      // details: {
+      //   country: "Denmark",
+      //   price: 500,
+      //   weight: 220
+      // },
+      // id: 8,
+      // images: [{
+      //     alt: "Primary image",
+      //     url: "cheese_01.jpg"
+      //   },
+      //   {
+      //     alt: "Secondary image",
+      //     url: "cheese_02.jpg"
+      //   },
+      //   {
+      //     alt: "Secondary image",
+      //     url: "cheese_03.jpg"
+      //   }
+      // ],
+      // name: "Mystery Cheese"
     };
+
     const key = `${data.category.substring(0,2).toUpperCase()}${`${data.id}`.padStart(3, "0")}`
 
     products.doc(key).set(data)

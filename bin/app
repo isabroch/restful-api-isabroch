@@ -1,11 +1,13 @@
 #!/usr/bin/env node
 const express = require("express");
+const formidable = require('express-formidable');
 const app = express();
 const router = express.Router();
 const { debugLogger, log } = require("../middleware/logger");
 const { join } = require("path");
 const { readdir } = require("fs");
 
+router.use(formidable());
 router.use(debugLogger);
 
 readdir(join(__dirname, "..", "routes"), function(err, files) {

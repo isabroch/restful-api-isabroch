@@ -1,5 +1,5 @@
 const db = require("../config/database");
 
-const ProductRef = db.firestore().collection("products");
+const ProductRef = db.collection("products");
 
 module.exports = ProductRef;

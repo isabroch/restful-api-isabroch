@@ -1,5 +1,4 @@
-const firebase = require("firebase");
-const firestore = require("firebase/firestore");
+const firebase = require('firebase');
 
 const firebaseConfig = {
   apiKey: "AIzaSyAeUatxasTi9KSdKDY053iwT4nsaSS9BCI",
@@ -11,6 +10,8 @@ const firebaseConfig = {
   appId: "1:1002215957359:web:d19aa7318730f710ffbe9a"
 };
 
-const db = firebase.initializeApp(firebaseConfig);
+firebase.initializeApp(firebaseConfig);
+
+let db = firebase.firestore();
 
 module.exports = db;

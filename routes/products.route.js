@@ -7,10 +7,10 @@ module.exports = function (router) {
     res.end();
   });
 
-  router.get("/products", products.getAll)
-  router.get("/products/:id", products.getOne)
+  router.get("/products", products.readAll)
+  router.get("/products/:id", products.readOne)
   router.delete("/products/:id", products.deleteOne)
-  router.patch("/products/:id", products.patchOne)
-  router.post("/products", products.postOne)
+  router.patch("/products/:id", products.updateOne)
+  router.post("/products", products.createOne)
 
 }

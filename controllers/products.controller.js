@@ -1,5 +1,7 @@
 const products = require("../models/product.model");
-const { log } = require("../middleware/logger")
+const {
+  log
+} = require("../middleware/logger")
 
 
 function getDocsAsJSON(docs, res) {
@@ -17,6 +19,8 @@ function getDocsAsJSON(docs, res) {
 }
 
 function correctFormTypes(form) {
+  let key;
+
   if (form.id) {
     form.id = parseInt(form.id);
   }
@@ -29,10 +33,13 @@ function correctFormTypes(form) {
   if (form.images) {
     form.images = JSON.parse(form.images);
   }
+  if (form.category && form.id) {
+    key = getKey(form.category, form.id)
+  }
 
   return {
     fields: form,
-    key: getKey(form.category, form.id)
+    key: key
   }
 }
 
@@ -55,7 +62,6 @@ const productsCrud = (() =>
 
     readOne: async (req, res) => {
       try {
-        console.log(req.params);
         const oneDoc = await products.where("id", "==", parseInt(req.params.id)).limit(1).get();
         getDocsAsJSON(oneDoc, res)
       } catch (error) {
@@ -78,12 +84,12 @@ const productsCrud = (() =>
     },
 
     updateOne: async (req, res) => {
+      const oneDoc = await products.where("id", "==", parseInt(req.params.id)).limit(1).get();
+      oneDoc.forEach((doc) => {
+        doc.ref.update( {...correctFormTypes(req.fields).fields} );
+      });
       try {
-        const oneDoc = await products.where("id", "==", parseInt(req.params.id)).limit(1).get();
-        oneDoc.forEach((doc) => {
-          doc.ref.update(correctFormTypes(req).fields);
-          res.status(204).end();
-        });
+        res.status(204).end();
       } catch (error) {
         res.status(500).end();
         log.error(error)

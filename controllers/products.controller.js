@@ -62,7 +62,7 @@ const productsCrud = (() =>
 
     readOne: async (req, res) => {
       try {
-        const oneDoc = await products.where("id", "==", parseInt(req.params.id)).limit(1).get();
+        const oneDoc = await products.where("id", "==", parseInt(req.params.id.match(/\d{1,}/)[0])).limit(1).get();
         getDocsAsJSON(oneDoc, res)
       } catch (error) {
         res.status(500).end();
@@ -72,7 +72,7 @@ const productsCrud = (() =>
 
     deleteOne: async (req, res) => {
       try {
-        const oneDoc = await products.where("id", "==", parseInt(req.params.id)).limit(1).get();
+        const oneDoc = await products.where("id", "==", parseInt(req.params.id.match(/\d{1,}/)[0])).limit(1).get();
         oneDoc.forEach((doc) => {
           doc.ref.delete();
           res.status(204).end();
@@ -84,7 +84,7 @@ const productsCrud = (() =>
     },
 
     updateOne: async (req, res) => {
-      const oneDoc = await products.where("id", "==", parseInt(req.params.id)).limit(1).get();
+      const oneDoc = await products.where("id", "==", parseInt(req.params.id.match(/\d{1,}/)[0])).limit(1).get();
       oneDoc.forEach((doc) => {
         doc.ref.update( {...correctFormTypes(req.fields).fields} );
       });

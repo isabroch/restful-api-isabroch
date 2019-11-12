@@ -12,5 +12,4 @@ module.exports = function (router) {
   router.delete("/products/:id", products.deleteOne)
   router.patch("/products/:id", products.updateOne)
   router.post("/products", products.createOne)
-
 }

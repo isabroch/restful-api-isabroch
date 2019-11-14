@@ -52,69 +52,72 @@ function getKey(category, id) {
 }
 
 
-const productsCrud = (() =>
-  ({
-    readAll: async (req, res) => {
-      try {
-        const allDocs = await products.get();
-        getDocsAsJSON(allDocs, res)
-      } catch (error) {
-        res.status(500).end();
-        log.error(error)
-      }
-    },
+const productsCrud = (() => {
+    function returnError(err) {
+      res.status(500).end();
+      log.error(error)
+    }
 
-    readOne: async (req, res) => {
-      try {
-        const oneDoc = await products.where("id", "==", getId(req.params.id)).limit(1).get();
-        getDocsAsJSON(oneDoc, res)
-      } catch (error) {
-        res.status(500).end();
-        log.error(error)
-      }
-    },
+    return {
+      readAll: async (req, res) => {
+        try {
+          const allDocs = await products.get();
+          getDocsAsJSON(allDocs, res)
+        } catch (error) {
+          returnError(error)
+        }
+      },
 
-    deleteOne: async (req, res) => {
-      try {
+      readOne: async (req, res) => {
+        try {
+          const oneDoc = await products.where("id", "==", getId(req.params.id)).limit(1).get();
+          getDocsAsJSON(oneDoc, res)
+        } catch (error) {
+          returnError(error)
+        }
+      },
+
+      deleteOne: async (req, res) => {
+        try {
+          const oneDoc = await products.where("id", "==", getId(req.params.id)).limit(1).get();
+          oneDoc.forEach((doc) => {
+            doc.ref.delete();
+            res.status(204).end();
+          });
+        } catch (error) {
+          returnError(error)
+        }
+      },
+
+      updateOne: async (req, res) => {
         const oneDoc = await products.where("id", "==", getId(req.params.id)).limit(1).get();
         oneDoc.forEach((doc) => {
-          doc.ref.delete();
-          res.status(204).end();
+          doc.ref.update({
+            ...correctFormTypes(req.fields).fields
+          });
         });
-      } catch (error) {
-        res.status(500).end();
-        log.error(error)
-      }
-    },
-
-    updateOne: async (req, res) => {
-      const oneDoc = await products.where("id", "==", getId(req.params.id)).limit(1).get();
-      oneDoc.forEach((doc) => {
-        doc.ref.update( {...correctFormTypes(req.fields).fields} );
-      });
-      try {
-        res.status(204).end();
-      } catch (error) {
-        res.status(500).end();
-        log.error(error)
-      }
-    },
-
-    createOne: async (req, res) => {
-      try {
-        if (Object.entries(req.fields).length < 6) {
-          res.status(404).send("Missing fields").end();
-        } else {
-          const data = correctFormTypes(req.fields);
-          products.doc(data.key).set(data.fields);
-          res.status(201).send(`Creating document with key ${data.key}`).end();
+        try {
+          res.status(204).end();
+        } catch (error) {
+          returnError(error)
         }
-      } catch (error) {
-        res.status(500).end();
-        log.error(error)
+      },
+
+      createOne: async (req, res) => {
+        try {
+          if (Object.entries(req.fields).length < 6) {
+            res.status(404).send("Missing fields").end();
+          } else {
+            const data = correctFormTypes(req.fields);
+            products.doc(data.key).set(data.fields);
+            res.status(201).send(`Creating document with key ${data.key}`).end();
+          }
+        } catch (error) {
+          returnError(error)
+        }
       }
     }
-  })
+  }
 
 )();
 

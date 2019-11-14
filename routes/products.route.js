@@ -8,6 +8,7 @@ module.exports = function (router) {
   });
 
   router.get("/products", products.readAll)
+  router.get("/products/query=:keyMatch.:typeMatch.:valueMatch", products.readQuery)
   router.get("/products/:id", products.readOne)
   router.delete("/products/:id", products.deleteOne)
   router.patch("/products/:id", products.updateOne)

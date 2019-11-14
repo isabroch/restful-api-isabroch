@@ -53,7 +53,7 @@ function getKey(category, id) {
 
 
 const productsCrud = (() => {
-    function returnError(err) {
+    function returnError(res, error) {
       res.status(500).end();
       log.error(error)
     }
@@ -64,7 +64,7 @@ const productsCrud = (() => {
           const allDocs = await products.get();
           getDocsAsJSON(allDocs, res)
         } catch (error) {
-          returnError(error)
+          returnError(res, error)
         }
       },
 
@@ -73,8 +73,18 @@ const productsCrud = (() => {
           const oneDoc = await products.where("id", "==", getId(req.params.id)).limit(1).get();
           getDocsAsJSON(oneDoc, res)
         } catch (error) {
-          returnError(error)
+          returnError(res, error)
         }
+      },
+
+      readQuery: async (req, res) => {
+        try {
+          const queryDoc = await products.where(req.params.keyMatch, req.params.typeMatch, req.params.valueMatch).get();
+          getDocsAsJSON(queryDoc, res)
+        } catch (error) {
+          returnError(res, error);
+        }
+
       },
 
       deleteOne: async (req, res) => {
@@ -85,7 +95,7 @@ const productsCrud = (() => {
             res.status(204).end();
           });
         } catch (error) {
-          returnError(error)
+          returnError(res, error)
         }
       },
 
@@ -99,7 +109,7 @@ const productsCrud = (() => {
         try {
           res.status(204).end();
         } catch (error) {
-          returnError(error)
+          returnError(res, error)
         }
       },
 
@@ -113,7 +123,7 @@ const productsCrud = (() => {
             res.status(201).send(`Creating document with key ${data.key}`).end();
           }
         } catch (error) {
-          returnError(error)
+          returnError(res, error)
         }
       }
     }

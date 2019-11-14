@@ -6,9 +6,11 @@ const router = express.Router();
 const { debugLogger, log } = require("../middleware/logger");
 const { join } = require("path");
 const { readdir } = require("fs");
+const cors = require("cors")
 
 router.use(formidable());
 router.use(debugLogger);
+router.use(cors());
 
 readdir(join(__dirname, "..", "routes"), function(err, files) {
 	if (err) return log.error(err.stack);
